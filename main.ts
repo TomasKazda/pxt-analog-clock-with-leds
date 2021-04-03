@@ -3,14 +3,17 @@ input.onButtonPressed(Button.A, function() {
 })
 
 input.onButtonPressed(Button.B, function() {
-    setPulse(1)
+    running = !running
 })
 input.onLogoEvent(TouchButtonEvent.LongPressed, function() {
     reset()
 })
 pins.onPulsed(DigitalPin.P8, PulseValue.High, function () {
     //serial.writeValue("time", control.millis())
-    setPulse(1)
+    if (!running)
+    {
+        setPulse(1)
+    }
 })
 
 function setPulse(pulses: number):void {
@@ -44,6 +47,7 @@ function reset():void {
 }
 
 let tick: number = 0
+let running: boolean = false
 let hoursLED: neopixel.Strip = null
 let minsLED: neopixel.Strip = null
 hoursLED = neopixel.create(DigitalPin.P14, 24, NeoPixelMode.RGB)
@@ -53,4 +57,11 @@ reset()
 
 basic.forever(function () {
 	
+})
+
+interval.OnInterval(999, function() {
+    if (running)
+    {
+        setPulse(1)
+    }
 })

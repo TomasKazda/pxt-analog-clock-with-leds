@@ -6,7 +6,8 @@
         "core": "*",
         "radio": "*",
         "microphone": "*",
-        "magicbit": "github:emakefun/pxt-magicbit#ed42b9f1bf85bcb39101cb4e65054ee3939e6243"
+        "magicbit": "github:emakefun/pxt-magicbit#ed42b9f1bf85bcb39101cb4e65054ee3939e6243",
+        "interval": "github:gbraad/pxt-interval#0.1.2"
     },
     "files": [
         "README.md",
