@@ -6,8 +6,7 @@
         "core": "*",
         "radio": "*",
         "microphone": "*",
-        "neopixel": "github:Microsoft/pxt-neopixel#v0.7.3",
-        "pxt-servo-pwm": "github:tomaskazda/pxt-servo-pwm#master"
+        "magicbit": "github:emakefun/pxt-magicbit#ed42b9f1bf85bcb39101cb4e65054ee3939e6243"
     },
     "files": [
         "README.md",
@@ -25,5 +24,5 @@
     "supportedTargets": [
         "microbit"
     ],
-    "preferredEditor": "blocksprj"
+    "preferredEditor": "tsprj"
 }
