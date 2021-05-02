@@ -21,26 +21,15 @@ pins.onPulsed(DigitalPin.P8, PulseValue.High, function () {
     //hand calibration
     if (running) {
         let delta = tick % 60
-        // if (delta != 59)
-        // {
-        //     if (delta == 0) magicbit.StepperDegree(magicbit.Steppers.STPM1, 2.9)
-        //     else if (delta < 5) magicbit.StepperDegree(magicbit.Steppers.STPM1, -5.8 * (delta + 1))
-        //     else if (delta < 59) magicbit.StepperDegree(magicbit.Steppers.STPM1, 5.8)
-        // }
-        serial.writeValue("div", delta)
+        if (delta == 0) magicbit.StepperDegree(magicbit.Steppers.STPM1, 3.2)
+        if (delta == 1) magicbit.StepperDegree(magicbit.Steppers.STPM1, 6.55)
+        if (delta == 58) magicbit.StepperDegree(magicbit.Steppers.STPM1, -3.2)
+        //serial.writeValue("div", delta)
     }
 })
 function setPulse (pulses: number) {
     tick += pulses
-    // for (let i = 0; i < pulses; i++) {
-    // if (++tick % 30 === 0)
-    // {
-    // hoursLED.rotate()
-    // }
-    // minsLED.rotate()
-    // }
-    // hoursLED.show()
-    // minsLED.show()
+
     if (tick % 4 == 0)
         magicbit.StepperDegree(magicbit.Steppers.STPM1, 5.8)
     else
@@ -51,10 +40,7 @@ function setPulse (pulses: number) {
     if (tick == 720) {
         tick = 0
     }
-    led.plotBarGraph(
-    tick,
-    720
-    )
+    led.plotBarGraph(tick, 720)
 }
 
 function reset () {
@@ -69,10 +55,7 @@ function reset () {
     // minsLED.setPixelColor(0, neopixel.rgb(0, 16, 0))
     // minsLED.show()
     // hoursLED.show()
-    led.plotBarGraph(
-    tick,
-    720
-    )
+    led.plotBarGraph(tick, 720)
     if (pins.digitalReadPin(DigitalPin.P8) != 0)
     {
         do
