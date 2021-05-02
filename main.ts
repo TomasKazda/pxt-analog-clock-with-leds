@@ -7,10 +7,10 @@ input.onLogoEvent(TouchButtonEvent.LongPressed, function () {
     reset()
 })
 input.onButtonPressed(Button.A, function () {
-    setPulse(60)
+    setPulse(30)
 })
 input.onButtonPressed(Button.B, function () {
-    running = !(running)
+    if (!reseting) running = !(running)
 })
 pins.onPulsed(DigitalPin.P8, PulseValue.High, function () {
     // serial.writeValue("time", control.millis())
@@ -22,19 +22,29 @@ pins.onPulsed(DigitalPin.P8, PulseValue.High, function () {
     if (running) {
         let delta = tick % 60
         if (delta == 0) magicbit.StepperDegree(magicbit.Steppers.STPM1, 3.2)
-        if (delta == 1) magicbit.StepperDegree(magicbit.Steppers.STPM1, 6.55)
-        if (delta == 58) magicbit.StepperDegree(magicbit.Steppers.STPM1, -3.2)
+        else if (delta == 1) magicbit.StepperDegree(magicbit.Steppers.STPM1, 6.55)
+        else if (delta == 58) magicbit.StepperDegree(magicbit.Steppers.STPM1, -3.2)
+        else if (delta > 1 && delta < 30) magicbit.StepperDegree(magicbit.Steppers.STPM1, 6.55 * delta)
+        else if (delta < 58) magicbit.StepperDegree(magicbit.Steppers.STPM1, -6.55 * delta)
         //serial.writeValue("div", delta)
     }
 })
 function setPulse (pulses: number) {
     tick += pulses
 
-    if (tick % 4 == 0)
-        magicbit.StepperDegree(magicbit.Steppers.STPM1, 5.8)
-    else
-        magicbit.StepperDegree(magicbit.Steppers.STPM1, 6.55)
-
+    let steps = pulses % 60;
+    if (steps > 0) 
+    {
+        tick -= steps
+        for (let i = 0; i < steps; i++)
+        {
+            tick++
+            if (tick % 4 == 0)
+                magicbit.StepperDegree(magicbit.Steppers.STPM1, 5.8)
+            else
+                magicbit.StepperDegree(magicbit.Steppers.STPM1, 6.55)
+        }
+    }
     minsLED.showBarGraph(tick % 60, 59)
     hoursLED.showBarGraph(tick % 720, 719)
     if (tick == 720) {
@@ -75,6 +85,7 @@ let hoursLED: neopixel.Strip = null
 hoursLED = neopixel.create(DigitalPin.P14, 24, NeoPixelMode.RGB)
 minsLED = neopixel.create(DigitalPin.P15, 60, NeoPixelMode.RGB)
 pins.setPull(DigitalPin.P8, PinPullMode.PullNone)
+basic.pause(500)
 reset()
 basic.forever(function () {
 	
