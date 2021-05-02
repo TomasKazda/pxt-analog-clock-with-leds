@@ -11,17 +11,12 @@
     },
     "files": [
         "README.md",
-        "main.blocks",
         "main.ts"
     ],
     "testFiles": [
         "test.ts"
     ],
     "public": true,
-    "targetVersions": {
-        "target": "3.1.58",
-        "targetId": "microbit"
-    },
     "supportedTargets": [
         "microbit"
     ],
