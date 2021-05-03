@@ -41,8 +41,8 @@ pins.onPulsed(DigitalPin.P8, PulseValue.High, function () {
         busy = true
         if (delta == 0) magicbit.StepperDegree(magicbit.Steppers.STPM1, 3.2)
         else if (delta == 58) magicbit.StepperDegree(magicbit.Steppers.STPM1, -3.2)
-        else if (delta > 0 && delta < 30) magicbit.StepperDegree(magicbit.Steppers.STPM1, 5.8 * delta)
-        else if (delta < 58) magicbit.StepperDegree(magicbit.Steppers.STPM1, -5.8 * (58 - delta))
+        else if (delta > 0 && delta < 30) magicbit.StepperDegree(magicbit.Steppers.STPM1, 5.8 * delta + 3.2)
+        else if (delta < 58) magicbit.StepperDegree(magicbit.Steppers.STPM1, -5.8 * Math.idiv(58 - delta, 2))
         busy = false
     }
 })
@@ -61,11 +61,11 @@ function setPulse (pulses: number) {
                 tick++
                 if (tick % 4 == 0)
                 {
-                    angle += 5.7;
+                    angle += 6.0//5.7;
                 }
                 else
                 {
-                    angle += 6.45;
+                    angle += 6.6//6.45;
                 }
             }
         } else {
