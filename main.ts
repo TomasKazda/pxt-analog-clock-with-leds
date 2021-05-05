@@ -29,20 +29,21 @@ input.onButtonPressed(Button.B, function () {
     if (!busy) running = !(running)
 })
 pins.onPulsed(DigitalPin.P8, PulseValue.High, function () {
+    if (control.eventTimestamp() < 1000) return //remove oscilation
     // serial.writeValue("time", control.millis())
     if (!(running) && !busy) {
         pulseStack++
     }
-
+    
     //hand calibration
     if (running) {
         let delta = tick % 60
-        //serial.writeValue("div", delta)
+
         busy = true
         if (delta == 0) magicbit.StepperDegree(magicbit.Steppers.STPM1, 3.2)
-        else if (delta == 58) magicbit.StepperDegree(magicbit.Steppers.STPM1, -3.2)
+        else if (delta == 58) magicbit.StepperDegree(magicbit.Steppers.STPM1, -6)
         else if (delta > 0 && delta < 30) magicbit.StepperDegree(magicbit.Steppers.STPM1, 5.8 * delta + 3.2)
-        else if (delta < 58) magicbit.StepperDegree(magicbit.Steppers.STPM1, -5.8 * Math.idiv(58 - delta, 2))
+        else if (delta < 58) magicbit.StepperDegree(magicbit.Steppers.STPM1, -12)
         busy = false
     }
 })
@@ -61,11 +62,11 @@ function setPulse (pulses: number) {
                 tick++
                 if (tick % 4 == 0)
                 {
-                    angle += 6.0//5.7;
+                    angle += 5.7;
                 }
                 else
                 {
-                    angle += 6.6//6.45;
+                    angle += 6.6;
                 }
             }
         } else {
