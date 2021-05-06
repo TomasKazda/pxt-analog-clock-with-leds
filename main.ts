@@ -1,17 +1,13 @@
 interval.OnInterval(999, function () {
     if (running && !busy) {
-        let tmp = ++pulseStack
-        pulseStack = 0
-        setPulse(tmp)
+        setPulse(1)
     } 
     else if (running && busy) {
         pulseStack++
     } 
     else if (pulseStack > 0)
     {
-        let tmp = pulseStack
-        pulseStack = 0
-        setPulse(tmp)
+        setPulse(0)
     }
 })
 input.onLogoEvent(TouchButtonEvent.LongPressed, function () {
@@ -19,22 +15,31 @@ input.onLogoEvent(TouchButtonEvent.LongPressed, function () {
 })
 input.onButtonPressed(Button.A, function () {
     if (!busy) {
-        pulseStack += 30
-        let tmp = pulseStack
-        pulseStack = 0
-        setPulse(tmp)
+        setPulse(30)
     }
 })
 input.onButtonPressed(Button.B, function () {
     if (!busy) running = !(running)
 })
-pins.onPulsed(DigitalPin.P8, PulseValue.High, function () {
-    if (control.eventTimestamp() < 1000) return //remove oscilation
-    // serial.writeValue("time", control.millis())
-    if (!(running) && !busy) {
-        pulseStack++
+input.onButtonPressed(Button.AB, function () {
+    if (minsLEDrange === 60)
+    {
+        hoursLEDrange = 43200
+        minsLEDrange = 3600
+        setClock()
+    } else {
+        hoursLEDrange = 720
+        minsLEDrange = 60
+        reset()
     }
-    
+})
+pins.onPulsed(DigitalPin.P8, PulseValue.High, function () {
+    if (control.eventTimestamp() < 500) return //remove oscilation
+    // serial.writeValue("time", control.millis())
+    // if (!(running) && !busy) {
+    //     pulseStack++
+    // }
+
     //hand calibration
     if (running) {
         let delta = tick % 60
@@ -47,7 +52,15 @@ pins.onPulsed(DigitalPin.P8, PulseValue.High, function () {
         busy = false
     }
 })
-function setPulse (pulses: number) {
+
+function setPulse(pulses: number): void {
+    pulseStack += pulses
+    let tmp = pulseStack
+    pulseStack = 0
+    callPulse(tmp)
+}
+
+function callPulse(pulses: number): void {
     tick += pulses
 
     let steps = pulses % 60;
@@ -72,28 +85,29 @@ function setPulse (pulses: number) {
         } else {
             angle = steps * 5.8
         }
-        minsLED.showBarGraph(tick % 60, 59)
-        hoursLED.showBarGraph(tick % 720, 719)
+        minsLED.showBarGraph(tick % minsLEDrange, minsLEDrange-1)
+        hoursLED.showBarGraph(tick % hoursLEDrange, hoursLEDrange-1)
         //serial.writeValue("angle", angle)
         magicbit.StepperDegree(magicbit.Steppers.STPM1, angle)
         busy = false
     }
 
-    if (tick == 720) {
+    if (tick === hoursLEDrange) {
         tick = 0
     }
-    led.plotBarGraph(tick, 720)
+    led.plotBarGraph(tick % minsLEDrange, minsLEDrange-1)
 }
 
 function reset () {
     busy = true
     running = false
     tick = 0
-    minsLED.showBarGraph(tick % 60, 59)
-    hoursLED.showBarGraph(tick % 720, 719)
+    pulseStack = 0
     minsLED.setBrightness(32)
     hoursLED.setBrightness(32)
-    led.plotBarGraph(tick, 720)
+    minsLED.showBarGraph(tick % minsLEDrange, minsLEDrange-1)
+    hoursLED.showBarGraph(tick % hoursLEDrange, hoursLEDrange-1)
+    led.plotBarGraph(tick % minsLEDrange, minsLEDrange-1)
     if (pins.digitalReadPin(DigitalPin.P8) != 0)
     {
         do
@@ -105,10 +119,20 @@ function reset () {
     }
     busy = false
 }
+
+function setClock(): void {
+    reset();
+    running = true
+    tick = DS3231.hours() * 3600 + DS3231.minutes() * 60;
+    setPulse(DS3231.seconds());
+}
+
 let tick = 0
 let pulseStack = 0
 let running = false
 let busy = false
+let minsLEDrange = 60
+let hoursLEDrange = 720
 let minsLED: neopixel.Strip = null
 let hoursLED: neopixel.Strip = null
 hoursLED = neopixel.create(DigitalPin.P14, 24, NeoPixelMode.RGB)

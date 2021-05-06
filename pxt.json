@@ -7,7 +7,8 @@
         "radio": "*",
         "microphone": "*",
         "magicbit": "github:emakefun/pxt-magicbit#ed42b9f1bf85bcb39101cb4e65054ee3939e6243",
-        "interval": "github:gbraad/pxt-interval#0.1.2"
+        "interval": "github:gbraad/pxt-interval#0.1.2",
+        "DS3231": "github:alexandrefrolov/ds3231#c1051c99372995777507ea01e1ed150e609d4337"
     },
     "files": [
         "README.md",
