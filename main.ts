@@ -1,4 +1,4 @@
-interval.OnInterval(999, function () {
+interval.OnInterval(991, function () {
     if (running && !busy) {
         setPulse(1)
     } 
@@ -124,7 +124,7 @@ function setClock(): void {
     reset();
     running = true
     tick = DS3231.hours() * 3600 + DS3231.minutes() * 60;
-    setPulse(DS3231.seconds());
+    setPulse(DS3231.seconds()+1);
 }
 
 let tick = 0
